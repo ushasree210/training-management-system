@@ -1,24 +1,32 @@
-version: "3.9"
-
 services:
-  postgres:
+  postgres-dev:
     image: postgres:15
-    container_name: tms-postgres
+    container_name: tms-postgres-dev
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: employee_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5433:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata_dev:/var/lib/postgresql/data
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: tms-rabbitmq
+  postgres-prod:
+    image: postgres:15
+    container_name: tms-postgres-prod
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5434:5432"
+    volumes:
+      - pgdata_prod:/var/lib/postgresql/data
 
 volumes:
-  pgdata:
+  pgdata_dev:
+  pgdata_prod:
+
+
+  # Credentials come from .env (ignored by git)
+# DO NOT hardcode secrets here
