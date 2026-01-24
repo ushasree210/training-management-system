@@ -2,3 +2,10 @@ databaseChangeLog:
   - include:
       file: 001_create_employees_table.sql
       relativeToChangelogFile: true
+
+  - include:
+      file: 002_refactor_employees_table.sql
+      relativeToChangelogFile: true
+
+
+       
