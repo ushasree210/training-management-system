@@ -28,7 +28,7 @@ jobs:
             --url="%DB_URL%" ^
             --username="%DB_USER%" ^
             --password="%DB_PASSWORD%" ^
-            --classpath=tools\liquibase\postgresql-42.7.4.jar ^
+            --classpath=tools\liquibase\lib\postgresql-42.7.4.jar ^
             update
 
   migrate-prod:
@@ -50,5 +50,5 @@ jobs:
             --url="%DB_URL%" ^
             --username="%DB_USER%" ^
             --password="%DB_PASSWORD%" ^
-            --classpath=tools\liquibase\postgresql-42.7.4.jar ^
+            --classpath=tools\liquibase\lib\postgresql-42.7.4.jar ^
             update
