@@ -9,25 +9,39 @@ on:
         default: "1"
 
 jobs:
-  rollback:
-    runs-on: ubuntu-latest
+  rollback-dev:
+    runs-on: self-hosted
+    environment: dev
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
-
-      - name: Run Liquibase rollback
+      - name: Preview rollback SQL (DEV)
+        shell: cmd
         env:
-          LIQUIBASE_COMMAND_URL: ${{ secrets.DB_URL }}
-          LIQUIBASE_COMMAND_USERNAME: ${{ secrets.DB_USER }}
-          LIQUIBASE_COMMAND_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
-          liquibase \
-            --changelog-file=services/employee-service/db/changelog/db.changelog-master.yaml \
+          liquibase ^
+            --changeLogFile=services/employee-service/db/changelog/db.changelog-master.yaml ^
+            --url="%DB_URL%" ^
+            --username="%DB_USER%" ^
+            --password="%DB_PASSWORD%" ^
+            --classpath=tools\liquibase\lib\postgresql-42.7.4.jar ^
+            rollbackCountSql ${{ inputs.count }}
+
+      - name: Run rollback (DEV)
+        shell: cmd
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          liquibase ^
+            --changeLogFile=services/employee-service/db/changelog/db.changelog-master.yaml ^
+            --url="%DB_URL%" ^
+            --username="%DB_USER%" ^
+            --password="%DB_PASSWORD%" ^
+            --classpath=tools\liquibase\lib\postgresql-42.7.4.jar ^
             rollbackCount ${{ inputs.count }}
