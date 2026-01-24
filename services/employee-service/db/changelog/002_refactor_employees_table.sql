@@ -20,3 +20,4 @@ CREATE UNIQUE INDEX ux_employees_email ON employees(email);
 -- rollback ALTER TABLE employees DROP COLUMN IF EXISTS status;
 -- rollback ALTER TABLE employees DROP COLUMN IF EXISTS email;
 -- rollback ALTER TABLE employees DROP COLUMN IF EXISTS last_name;
+-- rollback ALTER TABLE employees RENAME COLUMN first_name TO name;
