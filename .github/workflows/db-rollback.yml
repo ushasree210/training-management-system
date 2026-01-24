@@ -1,0 +1,33 @@
+name: DB Rollback (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "How many changesets to rollback"
+        required: true
+        default: "1"
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Run Liquibase rollback
+        env:
+          LIQUIBASE_COMMAND_URL: ${{ secrets.DB_URL }}
+          LIQUIBASE_COMMAND_USERNAME: ${{ secrets.DB_USER }}
+          LIQUIBASE_COMMAND_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          liquibase \
+            --changelog-file=services/employee-service/db/changelog/db.changelog-master.yaml \
+            rollbackCount ${{ inputs.count }}
