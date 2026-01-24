@@ -15,10 +15,8 @@ ALTER TABLE employees
 -- 3) Enforce uniqueness
 CREATE UNIQUE INDEX ux_employees_email ON employees(email);
 
--- rollback
--- ALTER TABLE employees RENAME COLUMN first_name TO name;
--- ALTER TABLE employees DROP COLUMN IF EXISTS last_name;
--- ALTER TABLE employees DROP COLUMN IF EXISTS email;
--- ALTER TABLE employees DROP COLUMN IF EXISTS status;
--- ALTER TABLE employees DROP COLUMN IF EXISTS updated_at;
--- DROP INDEX IF EXISTS ux_employees_email;
+-- rollback DROP INDEX IF EXISTS ux_employees_email;
+-- rollback ALTER TABLE employees DROP COLUMN IF EXISTS updated_at;
+-- rollback ALTER TABLE employees DROP COLUMN IF EXISTS status;
+-- rollback ALTER TABLE employees DROP COLUMN IF EXISTS email;
+-- rollback ALTER TABLE employees DROP COLUMN IF EXISTS last_name;

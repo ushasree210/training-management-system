@@ -7,8 +7,5 @@ databaseChangeLog:
       file: 002_refactor_employees_table.sql
       relativeToChangelogFile: true
 
-  - include:
-      file: 003_employee_columns_and_index.sql
-      relativeToChangeLogFile: true
 
        
