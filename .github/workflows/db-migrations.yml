@@ -1,0 +1,54 @@
+name: DB Migrations
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "services/employee-service/db/**"
+      - "tools/liquibase/**"
+      - ".github/workflows/db-migrations.yml"
+  workflow_dispatch:
+
+jobs:
+  migrate-dev:
+    runs-on: self-hosted
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Liquibase update (DEV)
+        shell: cmd
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          liquibase ^
+            --changeLogFile=services/employee-service/db/changelog/db.changelog-master.yaml ^
+            --url="%DB_URL%" ^
+            --username="%DB_USER%" ^
+            --password="%DB_PASSWORD%" ^
+            --classpath=tools\liquibase\postgresql-42.7.4.jar ^
+            update
+
+  migrate-prod:
+    needs: migrate-dev
+    runs-on: self-hosted
+    environment: prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Liquibase update (PROD)
+        shell: cmd
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          liquibase ^
+            --changeLogFile=services/employee-service/db/changelog/db.changelog-master.yaml ^
+            --url="%DB_URL%" ^
+            --username="%DB_USER%" ^
+            --password="%DB_PASSWORD%" ^
+            --classpath=tools\liquibase\postgresql-42.7.4.jar ^
+            update
