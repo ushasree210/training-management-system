@@ -1,0 +1,34 @@
+name: Publish employee-api image to GHCR
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set image tag (short SHA)
+        id: meta
+        run: echo "TAG=sha-${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        run: |
+          IMAGE="ghcr.io/${{ github.repository }}/employee-api:${TAG}"
+          docker build -f services/employee-service/Employee.Api/Dockerfile -t "$IMAGE" .
+          docker push "$IMAGE"

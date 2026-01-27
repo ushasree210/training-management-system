@@ -418,3 +418,8 @@ FodyWeavers.xsd
 *.msp
 
 *.env
+.env.local
+.env.dev
+.env.prod
+
+appsettings.Local.json

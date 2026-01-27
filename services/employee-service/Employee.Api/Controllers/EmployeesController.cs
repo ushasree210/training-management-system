@@ -14,7 +14,7 @@ namespace Employee.Api.Controllers
             var employees = new[]
             {
                 new { Id = 1, Name = "Alice", Department = "Engineering" },
-                new { Id = 2, Name = "Bob", Department = "HR" }
+                new { Id = 3, Name = "Bob", Department = "HR" }
             };
            
             return Ok(employees);
