@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  packages: read
+  packages: write
 
 jobs:
   deploy-dev:
@@ -25,7 +25,7 @@ jobs:
       - name: Login to GHCR
         shell: powershell
         run: |
-          echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
 
       - name: Deploy DEV
         shell: powershell
@@ -52,7 +52,7 @@ jobs:
       - name: Login to GHCR
         shell: powershell
         run: |
-          echo "${{ github.token  }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
 
       - name: Deploy PROD (requires approval)
         shell: powershell
