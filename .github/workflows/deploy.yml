@@ -22,10 +22,18 @@ jobs:
           $sha = "${{ github.event.workflow_run.head_sha }}".Substring(0,7)
           echo "TAG=sha-$sha" | Out-File -FilePath $env:GITHUB_ENV -Append
 
+      - name: Runner identity check
+        shell: powershell
+        run: |
+          whoami
+          docker info 
+          
       - name: Login to GHCR
         shell: powershell
         run: |
-          echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u "ushasree210" --password-stdin
+          $pat = "${{ secrets.GHCR_PAT }}".Trim()
+          $pat | docker login ghcr.io -u "ushasree210" --password-stdin
+
 
       - name: Deploy DEV
         shell: powershell
@@ -48,11 +56,17 @@ jobs:
         run: |
           $sha = "${{ github.event.workflow_run.head_sha }}".Substring(0,7)
           echo "TAG=sha-$sha" | Out-File -FilePath $env:GITHUB_ENV -Append
+      - name: Runner identity check
+        shell: powershell
+        run: |
+          whoami
+          docker info
 
       - name: Login to GHCR
         shell: powershell
         run: |
-           echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u "ushasree210" --password-stdin
+          $pat = "${{ secrets.GHCR_PAT }}".Trim()
+          $pat | docker login ghcr.io -u "ushasree210" --password-stdin
 
       - name: Deploy PROD (requires approval)
         shell: powershell
