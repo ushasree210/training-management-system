@@ -60,7 +60,7 @@ jobs:
   deploy-prod:
     needs: deploy-dev
     runs-on: self-hosted
-    environment: prod   # triggers approval gate
+    environment: prod   # triggers approval gate way
 
     steps:
       - name: Compute tag from published commit SHA
