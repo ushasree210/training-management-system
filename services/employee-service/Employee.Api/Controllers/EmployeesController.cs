@@ -15,7 +15,9 @@ namespace Employee.Api.Controllers
             {
                 new { Id = 5, Name = "Alice", Department = "Engineering" },
                 new { Id = 3, Name = "Bob", Department = "HR" },
-                new { Id = 6, Name = "Bob", Department = "HR" }
+                new { Id = 2, Name = "Bob", Department = "HR" }
+                //wnqkw
+
             };
            
             return Ok(employees);
