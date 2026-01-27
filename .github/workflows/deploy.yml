@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  packages: write
+  packages: read
 
 jobs:
   deploy-dev:
@@ -20,7 +20,7 @@ jobs:
         shell: powershell
         run: |
           $sha = "${{ github.event.workflow_run.head_sha }}".Substring(0,7)
-          echo "TAG=sha-$sha" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "TAG=sha-$sha" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Runner identity check
         shell: powershell
@@ -39,6 +39,7 @@ jobs:
         shell: powershell
         run: |
           cd C:\tms\employee-api-dev
+
           (Get-Content .\.env) `
             -replace '^IMAGE_TAG=.*', "IMAGE_TAG=$env:TAG" `
             | Set-Content .\.env
@@ -49,7 +50,8 @@ jobs:
   deploy-prod:
     needs: deploy-dev
     runs-on: self-hosted
-    environment: prod   # this is what triggers approval
+    environment: prod   # triggers approval gate way
+
     steps:
       - name: Compute tag from published commit SHA
         shell: powershell
@@ -62,7 +64,7 @@ jobs:
           whoami
           docker info
 
-      - name: Login to GHCR
+      - name: Check GHCR_PAT is present
         shell: powershell
         run: |
           $pat = "${{ secrets.GHCR_PAT }}".Trim()
@@ -72,6 +74,7 @@ jobs:
         shell: powershell
         run: |
           cd C:\tms\employee-api-prod
+
           (Get-Content .\.env) `
             -replace '^IMAGE_TAG=.*', "IMAGE_TAG=$env:TAG" `
             | Set-Content .\.env
