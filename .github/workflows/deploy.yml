@@ -22,28 +22,17 @@ jobs:
           $sha = "${{ github.event.workflow_run.head_sha }}".Substring(0,7)
           "TAG=sha-$sha" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Check GHCR_PAT is present
+      - name: Runner identity check
         shell: powershell
         run: |
-          $len = ("${{ secrets.GHCR_PAT }}").Length
-          Write-Host "GHCR_PAT length: $len"
-          if ($len -lt 20) { throw "GHCR_PAT not injected / too short" }
-
-      - name: Login to GHCR (clean docker config)
+          whoami
+          docker info 
+          
+      - name: Login to GHCR
         shell: powershell
         run: |
-          docker logout ghcr.io | Out-Null
-
-          $env:DOCKER_CONFIG = "$env:RUNNER_TEMP\.docker"
-          New-Item -ItemType Directory -Force -Path $env:DOCKER_CONFIG | Out-Null
-
           $pat = "${{ secrets.GHCR_PAT }}".Trim()
           $pat | docker login ghcr.io -u "ushasree210" --password-stdin
-
-      - name: Test pull (DEV)
-        shell: powershell
-        run: |
-          docker pull ghcr.io/ushasree210/training-management-system/employee-api:$env:TAG
 
       - name: Deploy DEV
         shell: powershell
@@ -60,37 +49,25 @@ jobs:
   deploy-prod:
     needs: deploy-dev
     runs-on: self-hosted
-    environment: prod   # triggers approval gate
+    environment: prod   # triggers approval gate way
 
     steps:
       - name: Compute tag from published commit SHA
         shell: powershell
         run: |
           $sha = "${{ github.event.workflow_run.head_sha }}".Substring(0,7)
-          "TAG=sha-$sha" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "TAG=sha-$sha" | Out-File -FilePath $env:GITHUB_ENV -Append
+      - name: Runner identity check
+        shell: powershell
+        run: |
+          whoami
+          docker info
 
       - name: Check GHCR_PAT is present
         shell: powershell
         run: |
-          $len = ("${{ secrets.GHCR_PAT }}").Length
-          Write-Host "GHCR_PAT length: $len"
-          if ($len -lt 20) { throw "GHCR_PAT not injected / too short" }
-
-      - name: Login to GHCR (clean docker config)
-        shell: powershell
-        run: |
-          docker logout ghcr.io | Out-Null
-
-          $env:DOCKER_CONFIG = "$env:RUNNER_TEMP\.docker"
-          New-Item -ItemType Directory -Force -Path $env:DOCKER_CONFIG | Out-Null
-
           $pat = "${{ secrets.GHCR_PAT }}".Trim()
           $pat | docker login ghcr.io -u "ushasree210" --password-stdin
-
-      - name: Test pull (PROD)
-        shell: powershell
-        run: |
-          docker pull ghcr.io/ushasree210/training-management-system/employee-api:$env:TAG
 
       - name: Deploy PROD (requires approval)
         shell: powershell
